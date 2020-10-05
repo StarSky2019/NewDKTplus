@@ -45,6 +45,7 @@ class Model(object):
         self.lambda_w2 = lambda_w2  # regularization parameter for waviness for l1-norm
         self.lambda_o = lambda_o  # regularization parameter for objective function
 
+    # 创建占位变量
     def _create_placeholder(self):
         print("Creating placeholder...")
         num_problems = self.num_problems
