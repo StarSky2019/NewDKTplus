@@ -1,0 +1,14 @@
+Network Configuration:
+batch_size: 32
+rnn_cell: <class 'tensorflow.python.ops.rnn_cell_impl.LSTMCell'>
+hidden_layer_structure: [200]
+learning_rate: 0.01
+keep_prob: 0.5
+embedding_size: 143
+lambda_o: 0.0
+lambda_w1: 0.0
+lambda_w2: 0.0
+Num of problems: 124
+Num of run: 5
+Max num of run: 500
+Keep Prob: 0.5
