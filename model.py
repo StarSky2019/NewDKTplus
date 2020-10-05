@@ -2,7 +2,7 @@
 desc：
     DKT+模型源代码
 info:
-    模型具体步骤
+    网络核心步骤
 """
 import numpy as np
 import tensorflow as tf
@@ -94,10 +94,10 @@ class Model(object):
 
             # Flatten the last layer output
             num_steps = tf.shape(last_layer_outputs)[1]
-            self.outputs_flat = tf.reshape(last_layer_outputs, shape=[-1, last_layer_size])
-            self.logits_flat = tf.matmul(self.outputs_flat, W_yh) + b_yh
-            self.logits = tf.reshape(self.logits_flat, shape=[-1, num_steps, self.num_problems])
-            self.preds = tf.sigmoid(self.logits)
+            self.outputs_flat = tf.reshape(last_layer_outputs, shape=[-1, last_layer_size])  # shape=(?,200)
+            self.logits_flat = tf.matmul(self.outputs_flat, W_yh) + b_yh  # shape=(?,124)
+            self.logits = tf.reshape(self.logits_flat, shape=[-1, num_steps, self.num_problems])  # shape=(?,?,124)
+            self.preds = tf.sigmoid(self.logits)  # shape=(?,?,124)
 
             # self.preds_flat = tf.sigmoid(self.logits_flat)
             # y_seq_flat = tf.cast(tf.reshape(self.y_seq, [-1, self.num_problems]), dtype=tf.float32)
@@ -109,9 +109,9 @@ class Model(object):
             # thereby exclude those time step that the student hasn't answered.
             target_indices = tf.where(tf.not_equal(self.y_seq, 0))
 
-            self.target_logits = tf.gather_nd(self.logits, target_indices)
-            self.target_preds = tf.gather_nd(self.preds, target_indices)  # needed to return AUC
-            self.target_labels = tf.gather_nd(self.y_corr, target_indices)
+            self.target_logits = tf.gather_nd(self.logits, target_indices)  # shape=(?,)
+            self.target_preds = tf.gather_nd(self.preds, target_indices)  # needed to return AUC shape=(?,)
+            self.target_labels = tf.gather_nd(self.y_corr, target_indices)  # shape=(?,)
 
             self.cross_entropy = tf.nn.sigmoid_cross_entropy_with_logits(logits=self.target_logits,
                                                                          labels=self.target_labels)
