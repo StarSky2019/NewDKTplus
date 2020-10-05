@@ -132,7 +132,7 @@ ckpt_save_dir = args.ckpt_save_dir
 # 定义主函数
 def main():
     # 配置tf.Session的运算方式，比如gpu运算或者cpu运算
-    config = tf.ConfigProto(log_device_placement=True)
+    config = tf.ConfigProto()
     # 当使用GPU时候，Tensorflow运行自动慢慢达到最大GPU的内存
     config.gpu_options.allow_growth = True
     sess = tf.Session(config=config)
