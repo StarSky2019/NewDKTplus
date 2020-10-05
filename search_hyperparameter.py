@@ -2,7 +2,7 @@
 desc：
     DKT+模型源代码
 info:
-    独立代码：超参数搜索
+    进行超参数搜索
 """
 
 import os
