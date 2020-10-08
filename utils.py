@@ -571,7 +571,7 @@ class DKT(object):
                 sign_diff_score += pred_sign_diff * score
                 diff_score += pred_diff * score
                 num_interactions += 1
-        return (sign_diff_score, diff_score, num_interactions)
+        return sign_diff_score, diff_score, num_interactions
 
     def consistency(self, is_train=False):
         if is_train:
@@ -628,7 +628,7 @@ class DKT(object):
             # print('batch:{}, w1:{}, w2:{}, length:{}'.format(batch_idx, m1, m2, seq_length_batch), end='\r')
         # print('total_num_steps:', total_num_steps)
 
-        consistency_m1 /= (total_num_steps)
-        consistency_m2 /= (total_num_steps)
+        consistency_m1 /= total_num_steps
+        consistency_m2 /= total_num_steps
 
         return consistency_m1, consistency_m2

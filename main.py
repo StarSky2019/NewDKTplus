@@ -26,10 +26,13 @@ train_file_name: str
 test_file_name: str
 ckpt_save_dir: str
 """
+
+# 创建一个解析对象
 parser = argparse.ArgumentParser()
 
 # 网络配置
 # network configuration
+# 向该解析对象添加相关命令行参数和选项
 parser.add_argument("-hl", "--hidden_layer_structure", default=[200, ], nargs='*', type=int,
                     help="The hidden layer structure in the RNN. If there is 2 hidden layers with first layer "
                          "of 200 and second layer of 50. Type in '-hl 200 50'")
@@ -69,6 +72,7 @@ parser.add_argument("-csd", "--ckpt_save_dir", type=str, default=None,
                     help="checkpoint save directory")
 parser.add_argument('--dataset', type=str, default='a2009')
 
+# 从对象中返回参数值
 args = parser.parse_args()
 
 rnn_cells = {
@@ -137,7 +141,7 @@ def main():
     config.gpu_options.allow_growth = True
     sess = tf.Session(config=config)
 
-    # 从文件中读取数据（核心步骤）
+    # 从文件中读取数据（核心步骤一）
     data = DKTData(train_path, test_path, batch_size=batch_size)
     data_train = data.train
     data_test = data.test
@@ -149,10 +153,10 @@ def main():
               num_runs=num_runs, num_epochs=num_epochs,
               keep_prob=keep_prob, logging=True, save=True)
 
-    # 建立计算图（核心步骤）
+    # 建立计算图（核心步骤二）
     # run optimization of the created model
     dkt.model.build_graph()
-    # 运行模型（核心步骤）
+    # 运行模型（核心步骤三）
     dkt.run_optimization()
     # 关闭会话
     # close the session

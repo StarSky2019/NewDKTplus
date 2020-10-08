@@ -95,6 +95,7 @@ class BatchGenerator:
         return self._current_batch
 
     @property
+    # python装饰器
     def current_batch(self):
         if self._current_batch is None:
             print("Current batch is None.")
@@ -110,6 +111,7 @@ class BatchGenerator:
         self.problem_seqs, self.correct_seqs = shuffle(self.problem_seqs, self.correct_seqs, random_state=42)
 
 
+# 读取数据函数
 def read_data_from_csv(filename):
     # read the csv file
     rows = []
@@ -125,6 +127,7 @@ def read_data_from_csv(filename):
     max_seq_length = 0
     num_problems = 0
     tuples = []
+    # 每隔3行读取一组数据
     for i in range(0, len(rows), 3):
         # numbers of problem a student answered
         seq_length = int(rows[i][0])
@@ -180,11 +183,11 @@ class DKTData:
         # 提取训练集知识点序列，应答序列
         problem_seqs = [student[1] for student in self.students_train]
         correct_seqs = [student[2] for student in self.students_train]
-        # 加工生成模型训练数据
+        # 加工生成训练集数据
         self.train = BatchGenerator(problem_seqs, correct_seqs, self.num_problems, batch_size)
 
         # 测试集知识点序列，应答序列
         problem_seqs = [student[1] for student in self.students_test]
         correct_seqs = [student[2] for student in self.students_test]
-        # 加工生成模型测试数据
+        # 加工生成测试集数据
         self.test = BatchGenerator(problem_seqs, correct_seqs, self.num_problems, batch_size)
