@@ -47,7 +47,7 @@ class Model(object):
 
     # 创建占位变量
     def _create_placeholder(self):
-        print("Creating placeholder...")
+        print("创建占位符 Creating placeholder...")
         num_problems = self.num_problems
 
         # placeholder
@@ -59,7 +59,7 @@ class Model(object):
         self.seq_length = length(self.X)
 
     def _influence(self):
-        print("Creating Loss...")
+        print("创建损失 Creating Loss...")
         hidden_layer_structure = self.hidden_layer_structure
 
         # Hidden Layer Construction
@@ -82,7 +82,7 @@ class Model(object):
             hidden_layer_input = outputs
 
     def _create_loss(self):
-        print("Creating Loss...")
+        print("创建损失 Creating Loss...")
         last_layer_size = self.hidden_layer_structure[-1]
         last_layer_outputs = self.hidden_layers_outputs[-1]
 
@@ -148,7 +148,7 @@ class Model(object):
             self.loss += self.lambda_w2 * self.waviness_l2
 
     def _create_optimizer(self):
-        print('Create optimizer...')
+        print('创建优化器 Create optimizer...')
         with tf.variable_scope('Optimizer'):
             self.optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate)
             gvs = self.optimizer.compute_gradients(self.loss)

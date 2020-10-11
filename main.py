@@ -141,6 +141,8 @@ def main():
     config.gpu_options.allow_growth = True
     sess = tf.Session(config=config)
 
+    print("模型开始训练！")
+
     # 从文件中读取数据（核心步骤一）
     data = DKTData(train_path, test_path, batch_size=batch_size)
     data_train = data.train

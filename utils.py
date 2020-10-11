@@ -57,9 +57,9 @@ class DKT(object):
         model_name = self.model_name = cell_type_str + '-' + layer_structure_str
 
         save_dir_name = 'n{}.lo{}.lw1{}.lw2{}/'.format(layer_structure_str,
-                                                    network_config['lambda_o'],
-                                                    network_config['lambda_w1'],
-                                                    network_config['lambda_w2'])
+                                                       network_config['lambda_o'],
+                                                       network_config['lambda_w1'],
+                                                       network_config['lambda_w2'])
         self.ckpt_save_dir = os.path.join(save_dir_prefix, 'checkpoints', save_dir_name)
         self.log_save_dir = os.path.join(save_dir_prefix, 'logs', save_dir_name)
         print('ckpt_save_dir: ', self.ckpt_save_dir)
@@ -72,14 +72,14 @@ class DKT(object):
         self.save = save
 
         # print out model information
-        self._log("Network Configuration:")
+        self._log("\n搭建网络配置 Network Configuration:")
         for k, v in network_config.items():
             log_msg = "{}: {}".format(k, v)
             self._log(log_msg)
-        self._log("Num of problems: {}".format(num_problems))
-        self._log("Num of run: {}".format(num_runs))
-        self._log("Max num of run: {}".format(num_epochs))
-        self._log("Keep Prob: {}".format(keep_prob))
+        self._log("问题数量 Num of problems: {}".format(num_problems))
+        self._log("轮数 Num of run: {}".format(num_runs))
+        self._log("迭代数 Max num of run: {}".format(num_epochs))
+        self._log("保留率 Keep Prob: {}".format(keep_prob))
 
     def train(self):
         data = self.data_train
@@ -186,10 +186,11 @@ class DKT(object):
 
         # 迭代总轮数
         for run_idx in range(num_runs):
+            print("正在进行第", run_idx + 1, "轮")
             self.run_count = run_idx
             sess.run(tf.global_variables_initializer())
             best_test_auc = 0.0
-            best_test_auc_current = 0.0 # the auc_current when the test_auc is the best.
+            best_test_auc_current = 0.0  # the auc_current when the test_auc is the best.
             best_waviness_l1 = 0.0
             best_waviness_l2 = 0.0
             best_consistency_m1 = 0.0
@@ -236,7 +237,7 @@ class DKT(object):
                 self._log(test_msg)
 
                 epoch_end_time = time.time()
-                self._log("time used for this epoch: {0}s".format(epoch_end_time - epoch_start_time))
+                self._log("time used for this epoch: {0}min".format((epoch_end_time - epoch_start_time)/60))
                 self._log(SPLIT_MSG)
 
                 # quit the training if there is no improve in AUC for 10 epochs.
@@ -272,6 +273,7 @@ class DKT(object):
         self._log("latex: \n" + self.auc_summary_in_latex())
         return avg_auc
 
+    # 保存模型
     def save_model(self):
         save_dir = os.path.join(self.ckpt_save_dir, 'run_{}'.format(self.run_count), self.model_name)
         sess = self.sess
@@ -282,6 +284,7 @@ class DKT(object):
         save_path = os.path.join(save_dir, self.model_name)
         saver.save(sess=sess, save_path=save_path)
 
+    # 加载模型
     def load_model(self):
         save_dir = os.path.join(self.ckpt_save_dir, 'run_{}'.format(self.run_count), self.model_name)
         sess = self.sess
@@ -292,6 +295,7 @@ class DKT(object):
         else:
             self._log("No model found at {}".format(save_path))
 
+    # 根据问题序列和应答序列计算隐层输出
     def get_hidden_layer_output(self, problem_seqs, correct_seqs, layer):
         model = self.model
         sess = self.sess
@@ -318,6 +322,7 @@ class DKT(object):
         result = hidden_layers_outputs[layer]
         return result
 
+    # 根据问题编号和应答结果求出知识追踪序列
     def get_output_layer(self, problem_seqs, correct_seqs):
         model = self.model
         sess = self.sess
@@ -342,6 +347,8 @@ class DKT(object):
 
         return pred_seqs
 
+    # 打印日志信息
+    # 同时写入日志
     def _log(self, log_msg):
         print(log_msg)
         if self.logging:
@@ -425,19 +432,25 @@ class DKT(object):
         latex_str += "\\\\ \n"
         return latex_str
 
+    # 绘制知识追踪曲线图
     def plot_output_layer(self, problem_seq, correct_seq, target_problem_ids=None):
         import matplotlib.pyplot as plt
         import seaborn as sns
+        # 所有问题编号按序排列
         problem_ids_answered = sorted(set(problem_seq))
         if target_problem_ids is None:
             target_problem_ids = problem_ids_answered
 
         # get_output_layer return output in shape (1, 38, 124)
+        # 根据问题编号和应答结果得到知识追踪过程（关键步骤）
         output = self.get_output_layer(problem_seqs=[problem_seq], correct_seqs=[correct_seq])[0]  # shape (38, 124)
+        # 选择要输出的问题编号
         output = output[:, target_problem_ids]  # shape (38, ?)
         output = np.transpose(output)  # shape (?, 38)
 
+        # 问题编号
         y_labels = target_problem_ids
+        # 应答序列
         x_labels = ["({},{})".format(p, c) for p, c in zip(problem_seq, correct_seq)]
         df = pd.DataFrame(output)
         df.columns = x_labels
@@ -552,18 +565,18 @@ class DKT(object):
         sign_diff_score = 0
         diff_score = 0
         for i in range(len(problem_seqs)):
-            if i%20 == 0:
+            if i % 20 == 0:
                 print(i, end='\r')
             problem_seq = problem_seqs[i]
             correct_seq = correct_seqs[i]
-            outputs = self.get_output_layer([problem_seq], [correct_seq]) # shape: (batch, time, num_problems)
+            outputs = self.get_output_layer([problem_seq], [correct_seq])  # shape: (batch, time, num_problems)
 
-            for j in range(1, len(problem_seq)): # exclude the prediction of the first output
+            for j in range(1, len(problem_seq)):  # exclude the prediction of the first output
                 target_id = problem_seq[j]
                 label = correct_seq[j]
-                score = 1.0 if label==1 else -1.0
+                score = 1.0 if label == 1 else -1.0
 
-                prev_pred = outputs[0][j-1][target_id]
+                prev_pred = outputs[0][j - 1][target_id]
                 curr_pred = outputs[0][j][target_id]
                 pred_diff = curr_pred - prev_pred
                 pred_sign_diff = np.sign(pred_diff)
@@ -606,11 +619,11 @@ class DKT(object):
             # finding m1, m2 for this batch
             base = y_seq_batch[:, 1:, :].copy()
             base[:] = -1.0
-            coefficient = np.sum( (np.power(base, 1 - y_corr_batch[:, 1:, :])) * y_seq_batch[:, 1:, :], axis=2)
+            coefficient = np.sum((np.power(base, 1 - y_corr_batch[:, 1:, :])) * y_seq_batch[:, 1:, :], axis=2)
 
             m1 = np.sum(
                 coefficient * np.sign(np.sum(
-                    (pred_seqs[:, 1:, :] - pred_seqs[:, :-1, :]) * y_seq_batch[:, 1:, :], #y_t-y_{t-1} \dot
+                    (pred_seqs[:, 1:, :] - pred_seqs[:, :-1, :]) * y_seq_batch[:, 1:, :],  # y_t-y_{t-1} \dot
                     axis=2
                 ))
             )

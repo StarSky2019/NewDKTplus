@@ -116,11 +116,11 @@ def read_data_from_csv(filename):
     # read the csv file
     rows = []
     with open(filename, 'r') as f:
-        print("Reading {0}".format(filename))
+        print("\n正在读取文件： Reading {0}".format(filename))
         reader = csv.reader(f, delimiter=',')
         for row in reader:
             rows.append(row)
-        print("{0} lines was read".format(len(rows)))
+        print("文件行数： {0} lines was read".format(len(rows)))
 
     # tuples stores the student answering sequence as
     # ([num_problems_answered], [problem_ids], [is_corrects])
@@ -161,10 +161,10 @@ def read_data_from_csv(filename):
     # add 1 to num_problems because 0 is in the pid
     num_problems += 1
 
-    print("max_num_problems_answered:", max_seq_length)
-    print("num_problems:", num_problems)
-    print("The number of students is {0}".format(len(tuples)))
-    print("Finish reading data.")
+    print("\n文件中最长序列数 max_num_problems_answered:", max_seq_length)
+    print("问题数量 num_problems:", num_problems)
+    print("学生人数 The number of students is {0}".format(len(tuples)))
+    print("完成数据的读取 Finish reading data.")
 
     return tuples, num_problems, max_seq_length
 
