@@ -78,7 +78,7 @@ dkt_original = DKT(sess, data_train, data_test, num_problems, network_config,
 
 # load the model
 dkt_original.model.build_graph()
-dkt_original.load_model()
+dkt_original.run_optimization()
 
 # 调试错误发生点
 m1_orig, m2_orig = dkt_original.consistency()
@@ -124,7 +124,7 @@ dkt = DKT(sess, data_train, data_test, num_problems, network_config,
 
 # load the model
 dkt.model.build_graph()
-dkt.load_model()
+dkt.run_optimization()
 
 # 调试错误发生点
 m1, m2 = dkt.consistency()
@@ -140,8 +140,8 @@ print(msg2)
 # 评估模型 调试错误发生点
 print(dkt.evaluate())  # return: auc_n, auc_c, total_loss
 print(dkt.waviness())
-print("original model: ", dkt_original.reconstruction_accurarcy())
-print("regularized model: ", dkt.reconstruction_accurarcy())
+# print("original model: ", dkt_original.reconstruction_accurarcy())
+# print("regularized model: ", dkt.reconstruction_accurarcy())
 
 #######################################################
 

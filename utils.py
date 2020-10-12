@@ -186,7 +186,7 @@ class DKT(object):
 
         # 迭代总轮数
         for run_idx in range(num_runs):
-            print("正在进行第", run_idx + 1, "轮")
+            print("正在进行第", run_idx + 1, "轮:")
             self.run_count = run_idx
             sess.run(tf.global_variables_initializer())
             best_test_auc = 0.0
@@ -203,11 +203,11 @@ class DKT(object):
                 # 将数据送入模型进行训练
                 auc_train, loss_train = self.train()
                 self._log(
-                    'Epoch {0:>4}, Train AUC: {1:.5}, Train Loss: {2:.5}'.format(epoch_idx + 1, auc_train, loss_train))
+                    '训练指标：\nEpoch {0:>4}, Train AUC: {1:.5}, Train Loss: {2:.5}'.format(epoch_idx + 1, auc_train, loss_train))
 
                 # 将数据送入模型测试效果
                 auc_test, auc_current_test, loss_test = self.evaluate()
-                test_msg = "Epoch {:>4}, Test AUC: {:.5}, Test AUC Curr: {:.5}, Test Loss: {:.5}".format(
+                test_msg = "测试指标:\nEpoch {:>4}, Test AUC: {:.5}, Test AUC Curr: {:.5}, Test Loss: {:.5}".format(
                     epoch_idx + 1,
                     auc_test,
                     auc_current_test,
@@ -237,7 +237,7 @@ class DKT(object):
                 self._log(test_msg)
 
                 epoch_end_time = time.time()
-                self._log("time used for this epoch: {0}min".format((epoch_end_time - epoch_start_time)/60))
+                self._log("time used for this epoch: {:.4f}min".format((epoch_end_time - epoch_start_time)/60))
                 self._log(SPLIT_MSG)
 
                 # quit the training if there is no improve in AUC for 10 epochs.
@@ -247,7 +247,7 @@ class DKT(object):
                 sys.stdout.flush()
                 # shuffle the training dataset
                 self.data_train.shuffle()
-            self._log("The best testing result occured at: {0}-th epoch, with testing AUC: {1:.5}".format(
+            self._log("本轮最佳 The best testing result occured at: {0}-th epoch, with testing AUC: {1:.5}".format(
                 best_epoch_idx, best_test_auc))
             self._log(SPLIT_MSG * 3)
             self.wavinesses_l1.append(best_waviness_l1)
@@ -264,13 +264,14 @@ class DKT(object):
         avg_consistency_m1 = np.average(self.consistency_m1)
         avg_consistency_m2 = np.average(self.consistency_m2)
 
-        self._log("average AUC for {0} runs: {1}".format(num_runs, avg_auc))
+        print("实验结果汇总：")
+        self._log("平均AUC值 average AUC for {0} runs: {1}".format(num_runs, avg_auc))
         self._log("average AUC Current for {0} runs: {1}".format(num_runs, avg_auc_current))
-        self._log("average waviness-l1 for {0} runs: {1}".format(num_runs, avg_waviness_l1))
-        self._log("average waviness-l2 for {0} runs: {1}".format(num_runs, avg_waviness_l2))
-        self._log("average consistency_m1 for {0} runs: {1}".format(num_runs, avg_consistency_m1))
-        self._log("average consistency_m1 for {0} runs: {1}".format(num_runs, avg_consistency_m2))
-        self._log("latex: \n" + self.auc_summary_in_latex())
+        self._log("平均w1值 average waviness-l1 for {0} runs: {1}".format(num_runs, avg_waviness_l1))
+        self._log("平均w2值 average waviness-l2 for {0} runs: {1}".format(num_runs, avg_waviness_l2))
+        self._log("平均m1值 average consistency_m1 for {0} runs: {1}".format(num_runs, avg_consistency_m1))
+        self._log("平均m2值 average consistency_m2 for {0} runs: {1}".format(num_runs, avg_consistency_m2))
+        self._log("\n模型信息汇总latex: \n" + self.auc_summary_in_latex())
         return avg_auc
 
     # 保存模型
@@ -347,8 +348,8 @@ class DKT(object):
 
         return pred_seqs
 
-    # 打印日志信息
-    # 同时写入日志
+    # 日志信息函数
+    # 非常重要！！！高频出现！！！
     def _log(self, log_msg):
         print(log_msg)
         if self.logging:

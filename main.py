@@ -169,4 +169,4 @@ if __name__ == "__main__":
     start_time = time.time()
     main()
     end_time = time.time()
-    print("program run for: {0}s".format(end_time - start_time))
+    print("模型运行时间 program run for: {:.2f}min".format((end_time - start_time)/60))

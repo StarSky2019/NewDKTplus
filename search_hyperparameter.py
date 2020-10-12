@@ -108,6 +108,7 @@ def main(num_search=5):
     # 网络参数
     network_config = generate_hyperparameter()
     # 开始调参
+    print("开始调参！")
     for lambda_o in args.lambda_o_values:
         for lambda_w1 in args.lambda_w1_values:
             for lambda_w2 in args.lambda_w2_values:
